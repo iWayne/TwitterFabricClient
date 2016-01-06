@@ -15,12 +15,16 @@ class UserTimelineViewController: TWTRTimelineViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Logout for testing
         if !logedin {
             Twitter.sharedInstance().logOut()
         }
     }
     
     override func viewDidAppear(animated: Bool) {
+        
+        //Request for List Timeline
         if let session = Twitter.sharedInstance().sessionStore.session() {
             //Show Tweets
             let userID = session.userID
