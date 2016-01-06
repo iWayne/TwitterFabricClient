@@ -21,17 +21,16 @@ class UserTimelineViewController: TWTRTimelineViewController {
     }
     
     override func viewDidAppear(animated: Bool) {
-        let session = Twitter.sharedInstance().sessionStore.session()
-        if  session == nil {
-            self.performSegueWithIdentifier("gotoLogin", sender: self)
-            print("We got here")
-        } else {
+        if let session = Twitter.sharedInstance().sessionStore.session() {
             //Show Tweets
-            let userID = session!.userID
+            let userID = session.userID
             let client = TWTRAPIClient(userID: userID)
             self.dataSource = TWTRListTimelineDataSource(listSlug: "twitter-syndication-team", listOwnerScreenName: "benward", APIClient: client)
             self.showTweetActions = true
-
+        } else {
+            //Switch to Login Scene
+            self.performSegueWithIdentifier("gotoLogin", sender: self)
+            print("We got here")
         }
     }
     

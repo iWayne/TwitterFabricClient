@@ -87,12 +87,6 @@ class LoginViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         let logInButton = TWTRLogInButton { (session, error) in
             if let unwrappedSession = session {
-//                let alert = UIAlertController(title: "Logged In",
-//                    message: "User \(unwrappedSession.userName) has logged in",
-//                    preferredStyle: UIAlertControllerStyle.Alert
-//                )
-//                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
-//                self.presentViewController(alert, animated: true, completion: nil)
                 NSLog("Login with UserID: %@", unwrappedSession.userID)
                 self.performSegueWithIdentifier("gotoTimeline", sender: self)
             } else {
@@ -103,6 +97,12 @@ class LoginViewController: UIViewController {
         // TODO: Change where the log in button is positioned in your view
         logInButton.center = self.view.center
         self.view.addSubview(logInButton)
+        
+        if let _ = Twitter.sharedInstance().session() {
+            self.performSegueWithIdentifier("gotoTimeline", sender: self)
+        } else {
+            NSLog("Needed Login")
+        }
     }
 
     
