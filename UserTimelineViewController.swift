@@ -61,7 +61,6 @@ class UserTimelineViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //return 0
         if let count = tweets?.count {
             print("Tweets #: \(count)")
             return count
@@ -99,22 +98,6 @@ class UserTimelineViewController: UITableViewController {
             }) { (error) -> Void in
                 NSLog("Fail to get response")
         }
-
-        /*
-        let client = TWTRAPIClient()
-        client.loadTweetWithID("20") { tweet, error in
-            if let t = tweet {
-                print("We get Tweets")
-                self.tweets = [t,t,t,t,t,t]
-                let tweetView = TWTRTweetView(tweet: t , style: TWTRTweetViewStyle.Compact)
-                self.tableView.addSubview(tweetView)
-                print(self.tweets?.count)
-                self.tableView.reloadData()
-            } else {
-                print("Failed to load Tweet: \(error!.localizedDescription)")
-            }
-        }
-        */
     }
     
 }
