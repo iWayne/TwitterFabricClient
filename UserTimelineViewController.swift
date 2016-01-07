@@ -25,8 +25,8 @@ class UserTimelineViewController: UITableViewController {
     override func viewDidAppear(animated: Bool) {
         
         if let _ = Twitter.sharedInstance().sessionStore.session() {
-            //Show Tweets
-            self.showTweets()
+            //Get Tweets
+            self.getTweets()
         
         } else {
             //Switch to Login Scene
@@ -35,17 +35,23 @@ class UserTimelineViewController: UITableViewController {
         }
     }
     
+    
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell =
+        let cell = UITableViewCell()
         if let tiwts = tweets {
-            
-        } else {
-            return
+            let tweetView = TWTRTweetView(tweet: tiwts[indexPath.row] as! TWTRTweet)
+            tweetView.showActionButtons = true
+            TWTRTweetViewStyle.Compact
+            cell.addSubview(tweetView)
+            NSLog("We do have data")
         }
+        return cell
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        //return 0
         if let count = tweets?.count {
+            print("Tweets #: \(count)")
             return count
         } else {
             return 0
@@ -63,7 +69,7 @@ class UserTimelineViewController: UITableViewController {
         }
     }
     
-    func showTweets() {
+    func getTweets() {
         //Make a request
         let twitter = Twitter.sharedInstance()
         let client = OAuthSwiftClient(consumerKey: twitter.consumerKey, consumerSecret: twitter.consumerSecret, accessToken: (twitter.sessionStore.session()?.authToken)!, accessTokenSecret: (twitter.sessionStore.session()?.authTokenSecret)!)
@@ -73,12 +79,9 @@ class UserTimelineViewController: UITableViewController {
             do{
                 let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
                 self.tweets = TWTRTweet.tweetsWithJSONArray(json as! [TWTRTweet])
+                self.tableView.reloadData()
                 
-                //                    let tweetView = TWTRTweetView(tweet: tweets![0] as! TWTRTweet)
                 //                    tweetView.center = CGPointMake(self.view.center.x, self.topLayoutGuide.length + tweetView.frame.size.height / 2);
-                //                    self.view.addSubview(tweetView)
-
-                
                 
             } catch is NSError {
                 print("error")
