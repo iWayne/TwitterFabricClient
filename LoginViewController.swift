@@ -21,6 +21,7 @@ class LoginViewController: UIViewController {
         let logInButton = TWTRLogInButton { (session, error) in
             if let unwrappedSession = session {
                 NSLog("Login with UserID: %@", unwrappedSession.userID)
+                NSLog("The token is %@", unwrappedSession.authToken)
                 self.performSegueWithIdentifier("gotoTimeline", sender: self)
             } else {
                 NSLog("Login error: %@", error!.localizedDescription);

@@ -8,35 +8,48 @@
 
 import UIKit
 import TwitterKit
-import TDOAuth
+import OAuthSwift
 
-class UserTimelineViewController: TWTRTimelineViewController {
+class UserTimelineViewController: UITableViewController {
     
-    var logedin = true
+    var logedin = false
+    var tweets = [AnyObject]?()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         if !logedin {
             Twitter.sharedInstance().logOut()
         }
-        self.getDate()
     }
     
     override func viewDidAppear(animated: Bool) {
-        /*
-        if let session = Twitter.sharedInstance().sessionStore.session() {
+        
+        if let _ = Twitter.sharedInstance().sessionStore.session() {
             //Show Tweets
-            let userID = session.userID
-            let client = TWTRAPIClient(userID: userID)
-            self.dataSource = TWTRListTimelineDataSource(listSlug: "twitter-syndication-team", listOwnerScreenName: "benward", APIClient: client)
-            self.showTweetActions = true
+            self.showTweets()
+        
         } else {
             //Switch to Login Scene
             self.performSegueWithIdentifier("gotoLogin", sender: self)
             print("We got here")
         }
-        */
-        
+    }
+    
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell =
+        if let tiwts = tweets {
+            
+        } else {
+            return
+        }
+    }
+    
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if let count = tweets?.count {
+            return count
+        } else {
+            return 0
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -50,75 +63,29 @@ class UserTimelineViewController: TWTRTimelineViewController {
         }
     }
     
-    func getDate() {
+    func showTweets() {
         //Make a request
         let twitter = Twitter.sharedInstance()
-        let ouathRequest = TDOAuth.URLRequestForPath("",
-            GETParameters: nil,
-            scheme: "https",
-            host: "api.twitter.com/1.1/statuses/home_timeline.json",
-            consumerKey: twitter.consumerKey,
-            consumerSecret: twitter.consumerSecret,
-            accessToken: twitter.session()?.authToken,
-            tokenSecret: twitter.session()?.authTokenSecret)
-        print(ouathRequest)
-        //Send Request
-//        let client = TWTRAPIClient()
-//        client.sendTwitterRequest(ouathRequest) { (response, data, connectionError) -> Void in
-//            if (connectionError == nil) {
-//                do{
-//                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
-//                    let tweets = TWTRTweet.tweetsWithJSONArray(json as! [AnyObject])
-//                    let tweetView = TWTRTweetView(tweet: tweets![0] as! TWTRTweet)
-//                    tweetView.center = CGPointMake(self.view.center.x, self.topLayoutGuide.length + tweetView.frame.size.height / 2);
-//                    self.view.addSubview(tweetView)
-//                    self.viewDidLoad()
-//                } catch is NSError {
-//                    print("error")
-//                }
-//                
-//            }
-//            else {
-//                print("Error: \(connectionError)")
-//            }
-//
-//        }
-    }
-    
-    /*
-    func getData() {
-        let client = TWTRAPIClient()
-        let statusesShowEndpoint = "https://api.twitter.com/1.1/statuses/home_timeline.json"
-        let params = ["count": "5"]
-        var clientError : NSError?
+        let client = OAuthSwiftClient(consumerKey: twitter.consumerKey, consumerSecret: twitter.consumerSecret, accessToken: (twitter.sessionStore.session()?.authToken)!, accessTokenSecret: (twitter.sessionStore.session()?.authTokenSecret)!)
         
-        let request = Twitter.sharedInstance().APIClient.URLRequestWithMethod("GET", URL: statusesShowEndpoint, parameters: params, error: &clientError)
-        
-        print(request.allHTTPHeaderFields)
-        
-        //Send Request
-        client.sendTwitterRequest(request) { (response, data, connectionError) -> Void in
-            if (connectionError == nil) {
-                do{
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
-                    let tweets = TWTRTweet.tweetsWithJSONArray(json as! [AnyObject])
-                    let tweetView = TWTRTweetView(tweet: tweets![0] as! TWTRTweet)
-                    tweetView.center = CGPointMake(self.view.center.x, self.topLayoutGuide.length + tweetView.frame.size.height / 2);
-                    self.view.addSubview(tweetView)
-                    self.viewDidLoad()
-                } catch is NSError {
-                    print("error")
-                }
+        //Send Request and get Data
+        client.get("https://api.twitter.com/1.1/statuses/home_timeline.json", success: { (data, response) -> Void in
+            do{
+                let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
+                self.tweets = TWTRTweet.tweetsWithJSONArray(json as! [TWTRTweet])
                 
-            }
-            else {
-                print("Error: \(connectionError)")
-            }
-        }
+                //                    let tweetView = TWTRTweetView(tweet: tweets![0] as! TWTRTweet)
+                //                    tweetView.center = CGPointMake(self.view.center.x, self.topLayoutGuide.length + tweetView.frame.size.height / 2);
+                //                    self.view.addSubview(tweetView)
 
-        
+                
+                
+            } catch is NSError {
+                print("error")
+            }
+            }) { (error) -> Void in
+                NSLog("Fail to get response")
+        }
     }
-*/
-    
     
 }
