@@ -31,21 +31,33 @@ class UserTimelineViewController: UITableViewController {
         } else {
             //Switch to Login Scene
             self.performSegueWithIdentifier("gotoLogin", sender: self)
-            print("We got here")
+            print("Prepare for login")
         }
+        self.tableView.separatorColor = UIColor.clearColor()
     }
     
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
+        
         if let tiwts = tweets {
-            let tweetView = TWTRTweetView(tweet: tiwts[indexPath.row] as! TWTRTweet)
+            let tweetView = TWTRTweetView(tweet: tiwts[indexPath.row] as! TWTRTweet, style: TWTRTweetViewStyle.Compact)
+            tweetView.sizeToFit()
+            tweetView.center.x = self.tableView.center.x
             tweetView.showActionButtons = true
-            TWTRTweetViewStyle.Compact
             cell.addSubview(tweetView)
-            NSLog("We do have data")
         }
         return cell
+    }
+    
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        var height = CGFloat(40)
+        if let tiwts = tweets {
+            let tweetView = TWTRTweetView(tweet: tiwts[indexPath.row] as! TWTRTweet, style: TWTRTweetViewStyle.Compact)
+            tweetView.showActionButtons = true
+            height = tweetView.frame.height
+        }
+        return height
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -80,15 +92,29 @@ class UserTimelineViewController: UITableViewController {
                 let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
                 self.tweets = TWTRTweet.tweetsWithJSONArray(json as! [TWTRTweet])
                 self.tableView.reloadData()
-                
-                //                    tweetView.center = CGPointMake(self.view.center.x, self.topLayoutGuide.length + tweetView.frame.size.height / 2);
-                
+
             } catch is NSError {
                 print("error")
             }
             }) { (error) -> Void in
                 NSLog("Fail to get response")
         }
+
+        /*
+        let client = TWTRAPIClient()
+        client.loadTweetWithID("20") { tweet, error in
+            if let t = tweet {
+                print("We get Tweets")
+                self.tweets = [t,t,t,t,t,t]
+                let tweetView = TWTRTweetView(tweet: t , style: TWTRTweetViewStyle.Compact)
+                self.tableView.addSubview(tweetView)
+                print(self.tweets?.count)
+                self.tableView.reloadData()
+            } else {
+                print("Failed to load Tweet: \(error!.localizedDescription)")
+            }
+        }
+        */
     }
     
 }
