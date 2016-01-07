@@ -11,7 +11,7 @@ import TwitterKit
 
 class UserTimelineViewController: TWTRTimelineViewController {
     
-    var logedin = false
+    var logedin = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,6 +21,7 @@ class UserTimelineViewController: TWTRTimelineViewController {
     }
     
     override func viewDidAppear(animated: Bool) {
+        /*
         if let session = Twitter.sharedInstance().sessionStore.session() {
             //Show Tweets
             let userID = session.userID
@@ -32,6 +33,8 @@ class UserTimelineViewController: TWTRTimelineViewController {
             self.performSegueWithIdentifier("gotoLogin", sender: self)
             print("We got here")
         }
+        */
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -45,6 +48,41 @@ class UserTimelineViewController: TWTRTimelineViewController {
         }
     }
     
+    
+    
+    /*
+    func getData() {
+        let client = TWTRAPIClient()
+        let statusesShowEndpoint = "https://api.twitter.com/1.1/statuses/home_timeline.json"
+        let params = ["count": "5"]
+        var clientError : NSError?
+        
+        let request = Twitter.sharedInstance().APIClient.URLRequestWithMethod("GET", URL: statusesShowEndpoint, parameters: params, error: &clientError)
+        
+        print(request.allHTTPHeaderFields)
+        
+        //Send Request
+        client.sendTwitterRequest(request) { (response, data, connectionError) -> Void in
+            if (connectionError == nil) {
+                do{
+                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
+                    let tweets = TWTRTweet.tweetsWithJSONArray(json as! [AnyObject])
+                    let tweetView = TWTRTweetView(tweet: tweets![0] as! TWTRTweet)
+                    tweetView.center = CGPointMake(self.view.center.x, self.topLayoutGuide.length + tweetView.frame.size.height / 2);
+                    self.view.addSubview(tweetView)
+                    self.viewDidLoad()
+                } catch is NSError {
+                    print("error")
+                }
+                
+            }
+            else {
+                print("Error: \(connectionError)")
+            }
+        }
+    */
+        
+    }
     
     
 }
