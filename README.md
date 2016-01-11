@@ -6,6 +6,9 @@ it support login with Twitter Acccount, read tweets from API. Start 'Twitter' wi
 
 Next Steps:
 1. Return a constent for the cell's height
+ 
 2. update tweets when pull down the tableview
+ 
 3. Find a way to store token instead of requesting every time
+
 4. Only use OAuthSwift to login Twitter
